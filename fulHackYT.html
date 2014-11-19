@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Cardboard Example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        margin: 0px;
+        overflow: hidden;
+      }
+      #example {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="example"></div>
+
+  <script src="js/third-party/threejs/three.min.js"></script>
+  <script src="js/third-party/threejs/StereoEffect.js"></script>
+  <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
+  <script src="js/third-party/threejs/OrbitControls.js"></script>
+    <script src="js/render.js"></script>
+
+  <script>
+
+  //
+
+
+      var Element = function ( entry ) {
+
+        var dom = document.createElement( 'div' );
+        dom.style.width = '480px';
+        dom.style.height = '360px';
+
+        var image = document.createElement( 'img' );
+        image.style.position = 'absolute';
+        image.style.width = '480px';
+        image.style.height = '360px';
+        image.src = entry.media$group.media$thumbnail[ 2 ].url;
+        dom.appendChild( image );
+
+        var button = document.createElement( 'img' );
+        button.style.position = 'absolute';
+        button.style.left = ( ( 480 - 86 ) / 2 ) + 'px';
+        button.style.top = ( ( 360 - 61 ) / 2 ) + 'px';
+        button.style.visibility = 'hidden';
+        button.style.WebkitFilter = 'grayscale()';
+        button.src = 'data:image/png;base64,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';
+        dom.appendChild( button );
+
+        var blocker = document.createElement( 'div' );
+        blocker.style.position = 'absolute';
+        blocker.style.width = '480px';
+        blocker.style.height = '360px';
+        blocker.style.background = 'rgba(0,0,0,0.5)';
+        blocker.style.cursor = 'pointer';
+        dom.appendChild( blocker );
+
+        var object = new THREE.CSS3DObject( dom );
+        object.position.x = 0;
+        // object.position.y = Math.random() * 2000 - 1000;
+        object.position.y = 2000;
+        object.position.z = -2000;
+
+        //
+
+        image.addEventListener( 'load', function ( event ) {
+
+          button.style.visibility = 'visible';
+
+        }, false );
+
+        dom.addEventListener( 'mouseover', function () {
+
+          button.style.WebkitFilter = '';
+          blocker.style.background = 'rgba(0,0,0,0)';
+
+        }, false );
+
+        dom.addEventListener( 'mouseout', function () {
+
+          button.style.WebkitFilter = 'grayscale()';
+          blocker.style.background = 'rgba(0,0,0,0.75)';
+
+        }, false );
+
+        dom.addEventListener( 'click', function ( event ) {
+
+          event.stopPropagation();
+
+          auto = false;
+
+          if ( player !== undefined ) {
+
+            player.parentNode.removeChild( player );
+            player = undefined;
+
+          }
+
+          player = document.createElement( 'iframe' );
+          player.style.position = 'absolute';
+          player.style.width = '480px';
+          player.style.height = '360px';
+          player.style.border = '0px';
+          player.src = 'http://www.youtube.com/embed/' + entry.id.$t.split( ':' ).pop() + '?rel=0&autoplay=1&controls=1&showinfo=0';
+          this.appendChild( player );
+
+          //
+
+          var prev = object.position.z + 400;
+
+        }, false );
+
+        return object;
+
+      };
+
+      function search( query ) {
+
+        window.location.hash = query;
+        console.log("test")
+
+        var request = new XMLHttpRequest();
+        request.addEventListener( 'load', onData, false );
+        request.open( 'GET', 'https://gdata.youtube.com/feeds/api/videos?v=2&alt=json&max-results=50&q=' + query, true );
+        request.send( null );
+
+      }
+      
+      function onData( event ) {
+
+        var data = JSON.parse( event.target.responseText );
+        var entries = data.feed.entry;
+
+        // console.log( entries );
+
+        for ( var i = 0; i < entries.length; i ++ ) {
+
+          ( function ( data, time ) {
+
+            setTimeout( function () {
+
+              scene.add( new Element( data ) );
+
+            }, time );
+
+          } )( entries[ i ], i * 15 );
+        
+        }
+
+      }
+
+
+
+      function search2( query ) {
+
+        window.location.hash = query;
+        console.log("test")
+
+        var request = new XMLHttpRequest();
+        request.addEventListener( 'load', onData2, false );
+        request.open( 'GET', 'https://gdata.youtube.com/feeds/api/videos?v=2&alt=json&max-results=2&q=' + query, true );
+        request.send( null );
+
+      }
+      
+      function onData2( event ) {
+
+        var data = JSON.parse( event.target.responseText );
+        var entries = data.feed.entry;
+
+        // console.log( entries );
+
+        for ( var i = 0; i < entries.length; i ++ ) {
+
+          ( function ( data, time ) {
+
+            setTimeout( function () {
+
+              new Test( data )
+
+            }, time );
+
+          } )( entries[ i ], i * 15 );
+        
+        }
+
+      }
+
+      var Test = function(entry) {
+
+    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+        map:THREE.ImageUtils.loadTexture("textures/white-cat-blue-eyes-640x360.jpg")
+    });
+    img.map.needsUpdate = true; //ADDED
+
+    // plane
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(16, 9),img);
+    plane.overdraw = true;
+        plane.position.set(20, 15, 10*Math.random())
+        plane.rotation.y = -Math.PI / 2;
+    scene.add(plane);
+/*
+
+        var geometry = new THREE.PlaneGeometry( 16, 9 );
+        var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+        var plane = new THREE.Mesh( geometry, material );
+
+
+
+        var image = new Image();
+        image.style.position = 'absolute';
+        image.style.width = '480px';
+        image.style.height = '360px';
+        image.onload = function() {
+          scene.add(plane);
+        }
+        image.src = entry.media$group.media$thumbnail[ 2 ].url;
+
+        plane.rotation.y = -Math.PI / 2;*/
+
+
+      }
+  //
+
+
+    var camera, scene, renderer, keystate;
+    var effect, controls;
+    var element, container;
+
+    var clock = new THREE.Clock();
+
+    init();
+    animate();
+
+
+    function init() {
+      renderer = new THREE.WebGLRenderer();
+      element = renderer.domElement;
+      container = document.getElementById('example');
+      container.appendChild(element);
+
+      effect = new THREE.StereoEffect(renderer);
+
+      scene = new THREE.Scene();
+
+      camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
+      camera.position.set(0, 10, 0);
+      scene.add(camera);
+
+      controls = new THREE.OrbitControls(camera, element);
+      controls.rotateUp(Math.PI / 4);
+      controls.target.set(
+        camera.position.x + 0.1,
+        camera.position.y,
+        camera.position.z
+      );
+      controls.noZoom = true;
+      controls.noPan = true;
+
+      keystate = {};
+      document.addEventListener("keydown", function(e) {
+        keystate[e.keyCode] = true
+      })
+      document.addEventListener("keyup", function(e) {
+        delete keystate[e.keyCode];
+      })
+
+      function setOrientationControls(e) {
+        if (!e.alpha) {
+          return;
+        }
+
+        controls = new THREE.DeviceOrientationControls(camera, true);
+        controls.connect();
+        controls.update();
+
+        element.addEventListener('click', fullscreen, false);
+
+        window.removeEventListener('deviceorientation', setOrientationControls);
+      }
+      window.addEventListener('deviceorientation', setOrientationControls, true);
+
+
+      var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
+      scene.add(light);
+
+      var texture = THREE.ImageUtils.loadTexture(
+        'textures/patterns/checker.png'
+      );
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat = new THREE.Vector2(50, 50);
+      texture.anisotropy = renderer.getMaxAnisotropy();
+
+      var material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        specular: 0xffffff,
+        shininess: 20,
+        shading: THREE.FlatShading,
+        map: texture
+      });
+
+      var geometry = new THREE.PlaneGeometry(1000, 1000);
+
+      var mesh = new THREE.Mesh(geometry, material);
+      mesh.rotation.x = -Math.PI / 2;
+      scene.add(mesh);
+
+      window.addEventListener('resize', resize, false);
+      setTimeout(resize, 1);
+
+      search2("cat");
+    }
+
+    function resize() {
+      var width = container.offsetWidth;
+      var height = container.offsetHeight;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
+      effect.setSize(width, height);
+    }
+
+    function update(dt) {
+      resize();
+
+      
+
+      camera.updateProjectionMatrix();
+
+      controls.update(dt);
+    }
+
+    function render(dt) {
+      effect.render(scene, camera);
+    }
+
+    function animate(t) {
+      requestAnimationFrame(animate);
+
+      update(clock.getDelta());
+      render(clock.getDelta());
+    }
+
+    function fullscreen() {
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen();
+      } else if (container.mozRequestFullScreen) {
+        container.mozRequestFullScreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+      }
+    }
+  </script>
+  </body>
+</html>

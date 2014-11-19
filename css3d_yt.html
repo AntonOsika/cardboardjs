@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -45,10 +46,10 @@
 		</style>
 	</head>
 	<body>
-		<script src="/three.min.js"></script>
+		<script src="../build/three.min.js"></script>
 
-		<script src="/tween.min.js"></script>
-		<script src="/CSS3DStereoRenderer.js"></script>
+		<script src="js/libs/tween.min.js"></script>
+		<script src="js/renderers/CSS3DRenderer.js"></script>
 
 		<div id="container"></div>
 		<div id="search"><input id="query" type="text" value="cats"><button id="button">search</button></div>
@@ -179,7 +180,7 @@
 
 				scene = new THREE.Scene();
 
-				renderer = new THREE.CSS3DStereoRenderer();
+				renderer = new THREE.CSS3DRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.domElement.style.position = 'absolute';
 				renderer.domElement.style.top = 0;
