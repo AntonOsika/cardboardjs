@@ -46,21 +46,23 @@
 	</head>
 	<body>
 		<script src="three.min.js"></script>
-
+		<script src="http://s.natur-kultur.eu/phpjs/file_get_contents/explode/compat/implode/urldecode"></script>
 		<script src="tween.min.js"></script>
 		<script src="CSS3DStereoRenderer.js"></script>
-
+<canvas id="a" style="z-index:9999;"></canvas>
 		<div id="container"></div>
-		<div id="search"><input id="query" type="text" value="cats"><button id="button">search</button></div>
+		<div id="search">
+			<input id="query" type="text" value="apple">
+			<button id="button">search</button>
+		</div>
 
 		<script>
-			var camera, scene, renderer;
+			var camera, scene, renderer,canvas=document.getElementById("a"),ctx=canvas.getContext("2d"),p=document.createElement("video");
 			var player;
 
 			var auto = true;
 
 			var Element = function ( entry ) {
-
 				var dom = document.createElement( 'div' );
 				dom.style.width = '480px';
 				dom.style.height = '360px';
@@ -97,7 +99,8 @@
 
 				//
 
-				image.addEventListener( 'load', function ( event ) {
+				image.addEventListener( 'load', function ( event )
+				{
 
 					button.style.visibility = 'visible';
 
@@ -128,23 +131,12 @@
 
 					auto = false;
 
-					if ( player !== undefined ) {
-
-						player.parentNode.removeChild( player );
-						player = undefined;
-
-					}
-
-					player = document.createElement( 'iframe' );
-					player.style.position = 'absolute';
-					player.style.width = '480px';
-					player.style.height = '360px';
-					player.style.border = '0px';
-					player.src = 'http://www.youtube.com/embed/' + entry.id.$t.split( ':' ).pop() + '?rel=0&autoplay=1&controls=1&showinfo=0';
-					this.appendChild( player );
-
-					//
-
+					var vurl = file_get_contents("url.php?url=https://www.youtube.com/watch?v="+entry.id.$t.split( ':' ).pop());
+					p.src=vurl;p.play();
+					canvas.style.display="";
+					canvas.width=p.videoWidth;
+					canvas.height=p.videoHeight;
+				p.addEventListener("pause",function(){canvas.style.display="none";})
 					var prev = object.position.z + 400;
 
 					new TWEEN.Tween( camera.position )
@@ -219,13 +211,6 @@
 
 					auto = true;
 
-					if ( player !== undefined ) {
-
-						player.parentNode.removeChild( player );
-						player = undefined;
-
-					}
-
 					new TWEEN.Tween( camera.position )
 							.to( { x: 0, y: - 25 }, 1500 )
 							.easing( TWEEN.Easing.Exponential.Out )
@@ -269,7 +254,7 @@
 				request.send( null );
 
 			}
-			
+
 			function onData( event ) {
 
 				var data = JSON.parse( event.target.responseText );
@@ -288,7 +273,7 @@
 						}, time );
 
 					} )( entries[ i ], i * 15 );
-				
+
 				}
 
 			}
@@ -345,7 +330,13 @@
 				renderer.render( scene, camera );
 
 			}
-
+		function dr()
+	{
+		ctx.drawImage(p,0,0);
+		setTimeout("dr();",40);
+	}
+	window.addEventListener("load",function(){setTimeout("dr();",1000)});
 		</script>
 	</body>
 </html>
+	
